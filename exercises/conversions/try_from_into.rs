@@ -21,7 +21,7 @@ enum IntoColorError {
     IntConversion,
 }
 
-// I AM NOT DONE
+// TODO: I AM NOT DONE
 
 // Your task is to complete this implementation
 // and return an Ok result of inner type Color.
@@ -32,10 +32,34 @@ enum IntoColorError {
 // but the slice implementation needs to check the slice length!
 // Also note that correct RGB color values must be integers in the 0..=255 range.
 
-// Tuple implementation
 impl TryFrom<(i16, i16, i16)> for Color {
     type Error = IntoColorError;
     fn try_from(tuple: (i16, i16, i16)) -> Result<Self, Self::Error> {
+        // let (r, g, b) = tuple;
+        // if r > 255 || g > 255 || b > 255 || r < 0 || g < 0 || b < 0 {
+        //     return Err(IntoColorError::IntConversion);
+        // }
+
+        let r: u8 = match u8::try_from(tuple.0) {
+            Ok(ok) => ok,
+            _ => return Err(IntoColorError::IntConversion),
+        };
+
+        let g: u8 = match u8::try_from(tuple.1) {
+            Ok(ok) => ok,
+            _ => return Err(IntoColorError::IntConversion),
+        };
+
+        let b: u8 = match u8::try_from(tuple.2) {
+            Ok(ok) => ok,
+            _ => return Err(IntoColorError::IntConversion),
+        };
+
+        Ok(Color {
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
+        })
     }
 }
 
@@ -43,6 +67,15 @@ impl TryFrom<(i16, i16, i16)> for Color {
 impl TryFrom<[i16; 3]> for Color {
     type Error = IntoColorError;
     fn try_from(arr: [i16; 3]) -> Result<Self, Self::Error> {
+        let [r, g, b] = arr;
+        if r > 255 || g > 255 || b > 255 || r < 0 || g < 0 || b < 0 {
+            return Err(IntoColorError::IntConversion);
+        }
+        Ok(Color {
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
+        })
     }
 }
 
@@ -50,6 +83,21 @@ impl TryFrom<[i16; 3]> for Color {
 impl TryFrom<&[i16]> for Color {
     type Error = IntoColorError;
     fn try_from(slice: &[i16]) -> Result<Self, Self::Error> {
+        if slice.len() != 3 {
+            return Err(IntoColorError::BadLen);
+        }
+
+        let r = slice[0];
+        let g = slice[1];
+        let b = slice[2];
+        if r > 255 || g > 255 || b > 255 || r < 0 || g < 0 || b < 0 {
+            return Err(IntoColorError::IntConversion);
+        }
+        Ok(Color {
+            red: r as u8,
+            green: g as u8,
+            blue: b as u8,
+        })
     }
 }
 
