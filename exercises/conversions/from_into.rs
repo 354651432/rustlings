@@ -40,19 +40,16 @@ impl From<&str> for Person {
         }
 
         let arr: Vec<_> = s.split(',').collect();
-        if arr.len() != 2 {
-            return Person::default();
-        }
-
-        if arr[0].is_empty() {
-            return Person::default();
-        }
-
-        if let Ok(age) = arr[1].parse::<usize>() {
-            return Person {
-                name: String::from(arr[0]),
-                age,
-            };
+        if let [name, age] = &arr[..] {
+            if name.is_empty() {
+                return Person::default();
+            }
+            if let Ok(age) = arr[1].parse::<usize>() {
+                return Person {
+                    name: String::from(arr[0]),
+                    age,
+                };
+            }
         }
 
         Person::default()
